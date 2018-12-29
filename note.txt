@@ -1,2 +1,2 @@
 #	SET PYTHON PATH
-export PYTHONPATH="/home/neverholiday/work/hanuman_utility":$PYTHONPATH
+export PYTHONPATH="/home/neverholiday/work/pyxis":$PYTHONPATH
