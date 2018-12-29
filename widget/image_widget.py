@@ -20,6 +20,8 @@ import os
 from PyQt4 import QtGui
 from PyQt4 import QtCore
 
+from image_renderer import ImageLabel
+
 import cv2
 import numpy as np
 
@@ -55,22 +57,13 @@ def loadImage():
 #
 #	CLASS DEFINITIONS
 #
-class ImageLabel( QtGui.QLabel ):
+class ImageWithBoundingBox( ImageLabel ):
 	""" FOR Renderer only! """
 
 	def __init__( self, currentImage ):
 		
 		#   call super class of label
-		super( ImageLabel, self ).__init__()
-
-		#   load image
-		self.image = currentImage
-
-		#   set image label
-		self.setImageLabel( self.image )
-
-		#   add image to label
-		self.setPixmap( self.pixmap ) 
+		super( ImageWithBoundingBox, self ).__init__( currentImage )
 
 		#   initial position top left
 		#   initial position bottom right
@@ -154,21 +147,6 @@ class ImageLabel( QtGui.QLabel ):
 		#   end
 		self.painter.end()
 
-	def setImageLabel( self, image ):
-		
-		#   get property of image 
-		height, width, channel = image.shape
-		bytePerRow = image.strides[ 0 ]
-
-		#   create qImage from opencv
-		#   convert image numpy format to QImage format
-		self.qImage = QtGui.QImage( image.data, width, height, bytePerRow, QtGui.QImage.Format_RGB888 )
-
-		#   create pixmap by QImage object
-		self.pixmap = QtGui.QPixmap( self.qImage )
-
-
-
 class ImageWidget( QtGui.QWidget ):
 	
 	def __init__( self, imageSequenceProvider ):
@@ -177,7 +155,7 @@ class ImageWidget( QtGui.QWidget ):
 		super( ImageWidget, self ).__init__()
 
 		#   create image label
-		self.imageLabel = ImageLabel( imageSequenceProvider.currentFrameImage )
+		self.imageLabel = ImageWithBoundingBox( imageSequenceProvider.currentFrameImage )
 
 		#   create layout
 		self.boxLayout = QtGui.QVBoxLayout()
