@@ -79,6 +79,9 @@ class ImageSequence( object ):
 		#	get list of path image sequence (absolute path)
 		self.framePathList = self.getImageSequenceFromPath()
 
+		#	add number of frame attribute
+		self.numFrame = len( self.framePathList )
+
 		#	get list of image sequence
 		self.frameList = self.getFrameData()
 
@@ -93,7 +96,7 @@ class ImageSequence( object ):
 		#	terminate when get over lenght of list
 		if self.indexPointer >= len( self.frameList ) - 1:
 			self.indexPointer = len( self.frameList ) - 1
-			return
+			return False
 
 		#	increment index of index pointer
 		self.indexPointer += 1
@@ -103,13 +106,15 @@ class ImageSequence( object ):
 
 		#	set current frame path
 		self.currentFramePath = self.framePathList[ self.indexPointer ]
+
+		return True
 		
 	def previousFrame( self ):
 		
 		#	terminate when get lower lenght of list
 		if self.indexPointer <= 0:
 			self.indexPointer = 0
-			return
+			return False
 
 		#	decrease index of index pointer
 		self.indexPointer -= 1
@@ -119,6 +124,8 @@ class ImageSequence( object ):
 
 		#	set current frame path
 		self.currentFramePath = self.framePathList[ self.indexPointer ]
+
+		return True
 
 	def setIndexFrame( self, frameIndex ):
 
@@ -134,6 +141,19 @@ class ImageSequence( object ):
 
 		#	set current frame path
 		self.currentFramePath = self.framePathList[ self.indexPointer ]
+
+	def getImageWithMask( self, lowerBound, upperBound ):
+
+		#	change to hsv image
+		hsvImage = cv2.cvtColor( self.currentFrameImage, cv2.COLOR_RGB2HSV )
+
+		#	limit with range of hsv value, get mask
+		mask = cv2.inRange( hsvImage, lowerBound, upperBound )
+
+		#	bitwise-and with mask for get res and return it
+		res = cv2.bitwise_and( self.currentFrameImage, self.currentFrameImage, mask = mask )
+
+		return res
 
 	def getImageSequenceFromPath( self, indicateFrameStr = 'frame' ):
 		
