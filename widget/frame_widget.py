@@ -46,7 +46,7 @@ CAMERA_DEVICE_LIST = [ '/dev/video0', '/dev/video1' ]
 
 class FrameWidget( QtGui.QWidget ):
 
-	def __init__( self, cameraDevice ):
+	def __init__( self, cameraDevice, colorButtonInstance ):
 
 		#   check camera device
 		assert cameraDevice in CAMERA_DEVICE_LIST, "{} is not compatible with this software".format( cameraDevice )
@@ -61,18 +61,20 @@ class FrameWidget( QtGui.QWidget ):
 		#   create instance of label
 		self.imageLabel = ImageLabel( self.camera.frame )
 
+		#	get instance of colorButton to get value
+		self.colorButtonInstance = colorButtonInstance
+
 		#   start timer interupt
 		#   connect with function callback 
 		self.timer = QtCore.QTimer()
 		self.timer.timeout.connect( self.updataFrameCallback )
-		self.timer.start( 20 )
+		self.timer.start( 1 )
 
 		#   create box layout
 		self.verticalLayout = QtGui.QVBoxLayout()
 		
 		#   add image label to layout
 		self.verticalLayout.addWidget( self.imageLabel )
-		self.verticalLayout.addStretch()
 
 		#   set layout 
 		self.setLayout( self.verticalLayout )
@@ -83,17 +85,28 @@ class FrameWidget( QtGui.QWidget ):
 		#   read from camera
 		self.camera.read()
 
+		#	get upper and value array
+		upperValueArray, lowerValueArray = self.colorButtonInstance.getColorRangeValueList()
+
+		#	get image that and with mask
+		resImage =	self.camera.getImageWithMask( upperValueArray, lowerValueArray )
+
 		#   set new image to label
-		self.imageLabel.setImageLabel( self.camera.frame )
+		self.imageLabel.setImageLabel( resImage )
 
 
 if __name__ == "__main__":
+
+	from widget.color_calibrate_button_widget import ColorButton
 	
 		#	initial app
 	app = QtGui.QApplication( sys.argv )
 
+	#	call instance of color button
+	colorButton = ColorButton( 255, 255, 255, 0, 0, 0 )
+
 	#	call widget
-	widget = FrameWidget( '/dev/video0' )
+	widget = FrameWidget( '/dev/video1', colorButton )
 
 	#	show
 	widget.show()
