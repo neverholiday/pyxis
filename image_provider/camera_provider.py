@@ -82,7 +82,20 @@ class Camera( object ):
 
         #   convert to RGB
         self.frame = cv2.cvtColor( self.frame, cv2.COLOR_BGR2RGB )
+
+    def getImageWithMask( self, upperValueList, lowerValueList ):
+
+        #   convert to hsv
+        hsvImage = cv2.cvtColor( self.frame, cv2.COLOR_RGB2HSV )
+
+        #   get mask
+        mask = cv2.inRange( hsvImage, lowerValueList, upperValueList )
     
+        #   get res
+        res = cv2.bitwise_and( self.frame, self.frame, mask = mask )
+
+        return res
+
     def end( self ):
 
         #   release
