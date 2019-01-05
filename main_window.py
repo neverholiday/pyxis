@@ -92,14 +92,14 @@ class MainWidget( QtGui.QWidget ):
         self.imageSequenceProvider = ImageSequence( framePath )
 
         #   get widget
-        self.imageWidget = ImageWidget( self.imageSequenceProvider )
-        #self.buttonWidget = StepButton( self.imageSequenceProvider )
+        #self.imageWidget = ImageWidget( self.imageSequenceProvider )
+        self.buttonWidget = StepButton( self.imageSequenceProvider )
 
         #   create box layout
         self.boxLayout = QtGui.QVBoxLayout()   
 
         #   add widget to box
-        self.boxLayout.addWidget( self.imageWidget )
+        self.boxLayout.addWidget( self.buttonWidget )
 
       
         #   set layout
