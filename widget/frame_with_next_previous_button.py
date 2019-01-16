@@ -45,7 +45,7 @@ from image_renderer import ImageLabel
 
 class ImageWithNextPreviousButton( QtGui.QWidget ):
 
-	def __init__( self, framePathStr, colorButtonInstance = None ):
+	def __init__( self, framePathStr, imageLabelClass, colorButtonInstance = None ):
 
 		#   SUPAAA
 		super( ImageWithNextPreviousButton, self ).__init__()
@@ -60,7 +60,7 @@ class ImageWithNextPreviousButton( QtGui.QWidget ):
 		self.colorButtonInstance = colorButtonInstance
 
 		#   create instance of image label as image renderer
-		self.imageLabel = ImageLabel( self.imageSequenceProvider.currentFrameImage )
+		self.imageLabel = imageLabelClass( self.imageSequenceProvider.currentFrameImage )
 		self.displayImageWithMask()
 
 		#   create next and previous button
@@ -68,8 +68,13 @@ class ImageWithNextPreviousButton( QtGui.QWidget ):
 		self.playPauseButton = QtGui.QPushButton( "Play/Pause" )
 		self.previousButton = QtGui.QPushButton( "Previous" )
 
+		#	create shortcut for button
+		self.nextButton.setShortcut( QtGui.QKeySequence( QtCore.Qt.Key_D ) )
+		self.previousButton.setShortcut( QtGui.QKeySequence( QtCore.Qt.Key_A ) )
+		self.playPauseButton.setShortcut( QtGui.QKeySequence( QtCore.Qt.Key_P ) )
+
 		#   connect with function callback
-		self.nextButton.clicked.connect( self.nexButtonFunctionCallback )
+		self.nextButton.clicked.connect( self.nextButtonFunctionCallback )
 		self.previousButton.clicked.connect( self.previousButtonFunctionCallback )
 		self.playPauseButton.clicked.connect( self.playPauseButtonFunctionCallback )
 
@@ -101,7 +106,7 @@ class ImageWithNextPreviousButton( QtGui.QWidget ):
 		#   set main layout
 		self.setLayout( self.mainLayout )
 
-	def nexButtonFunctionCallback( self ):
+	def nextButtonFunctionCallback( self ):
 		print "call nexButtonFunctionCallback"
 
 		#   call provider
@@ -168,16 +173,15 @@ class ImageWithNextPreviousButton( QtGui.QWidget ):
 		self.imageLabel.setImageLabel( res )
 
 
-
-
-
 if __name__ == "__main__":
+
+	from image_widget import ImageWithBoundingBox
 
 	#	initial app
 	app = QtGui.QApplication( sys.argv )
 	
 	#	call widget
-	widget = ImageWithNextPreviousButton( "/home/neverholiday/work/ball_detector/raw_data/camera_onbot" )
+	widget = ImageWithNextPreviousButton( "/home/neverholiday/work/ball_detector/raw_data/camera_onbot", ImageLabel )
 
 	#	show
 	widget.show()
