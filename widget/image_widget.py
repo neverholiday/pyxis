@@ -72,6 +72,11 @@ class ImageWithBoundingBox( ImageLabel ):
 		self.topLeftPosition = None
 		self.bottomRightPosition = None
 
+		#	initial list of position that contain tuple of coordinate
+		#	ex. [ ( topRight, bottomLeft ), ( ... ) ]
+		self.submitPositivePosition = list()
+		self.submitNegativePosition = list()
+
 		#	bounding box rectangle object
 		self.boundingBoxRect = None
 
@@ -84,8 +89,8 @@ class ImageWithBoundingBox( ImageLabel ):
 		self.topLeftPosition = event.pos()
 		self.bottomRightPosition = event.pos()
 
-		#   update 
-		self.update()
+ 		#   update 
+		#self.update()
 
 	def mouseMoveEvent( self, event ):
 
@@ -96,7 +101,7 @@ class ImageWithBoundingBox( ImageLabel ):
 		self.bottomRightPosition = event.pos()
 
 		#   update 
-		self.update()
+		#self.update()
 
 	def mouseReleaseEvent( self, event ):
 
@@ -107,7 +112,7 @@ class ImageWithBoundingBox( ImageLabel ):
 		self.bottomRightPosition = event.pos()
 
 		#   update 
-		self.update()
+		#self.update()
 
 	def paintEvent( self, event ):
 		
@@ -120,11 +125,46 @@ class ImageWithBoundingBox( ImageLabel ):
 		#   set painter to draw pixmap
 		self.painter.drawPixmap( self.rect(), self.pixmap )
 
+		#
+		#	re-draw image submit roi	
+		#
+		for roiTuple in self.submitPositivePosition:
+
+			#	get top left and bottom right
+			topLeftPos = QtCore.QPoint( roiTuple[ 0 ][ 1 ], roiTuple[ 0 ][ 0 ] )  
+			bottomRightPos = QtCore.QPoint( roiTuple[ 1 ][ 1 ], roiTuple[ 1 ][ 0 ] )
+
+			#	setup pen
+			self.painter.setPen( QtGui.QColor( QtCore.Qt.blue ) )
+
+			#	create temporary bounding box
+			boundingBoxRect = QtCore.QRect( topLeftPos, bottomRightPos )
+
+			#	draw each of box
+			self.painter.drawRect( boundingBoxRect )
+
+		for roiTuple in self.submitNegativePosition:
+
+			#	get top left and bottom right
+			topLeftPos = QtCore.QPoint( roiTuple[ 0 ][ 1 ], roiTuple[ 0 ][ 0 ] )  
+			bottomRightPos = QtCore.QPoint( roiTuple[ 1 ][ 1 ], roiTuple[ 1 ][ 0 ] )
+
+			#	setup pen
+			self.painter.setPen( QtGui.QColor( QtCore.Qt.red ) )
+
+			#	create temporary bounding box
+			boundingBoxRect = QtCore.QRect( topLeftPos, bottomRightPos )
+
+			#	draw each of box
+			self.painter.drawRect( boundingBoxRect )
+
+		#	create not submit bounding box
 		if self.bottomRightPosition is not None and self.topLeftPosition is not None:
 			
 			#   setup pen
-			self.painter.setPen( QtGui.QColor( QtCore.Qt.red ) )
+			self.painter.setPen( QtGui.QColor( QtCore.Qt.yellow ) )
 
+			#	create bounding box
 			self.boundingBoxRect = QtCore.QRect( self.topLeftPosition, self.bottomRightPosition )
 
 			#   draw !!!
@@ -142,8 +182,8 @@ class ImageWithBoundingBox( ImageLabel ):
 				self.painter.drawPixmap( self.rect(), self.pixmap )
 			
 			except TypeError:
-				print "[ERROR] {} : No rectangle object before".format( self ) 
- 
+				#print "[ERROR] {} : No rectangle object before".format( self ) 
+				pass
 		#   end
 		self.painter.end()
 
