@@ -20,6 +20,8 @@ import os
 import cv2
 import numpy as np
 
+import yaml
+
 ########################################################
 #
 #	GLOBALS
@@ -57,19 +59,62 @@ class ROIProvider( object ):
         #   initial negative dict
         self.negativeRoiDict = dict()
 
+        #   initial positive and negative dictionary
+        self.allPosAndNegDict = { "Positive" : self.positiveRoiDict, "Negative" : self.negativeRoiDict }
+
         #   initial ROI list
         self.positiveImageList = list()
         self.negativeImageList = list()
 
     def setPositiveData( self, imagePathStr, topLeftTuple, bottomRightTuple ):
         
-        #   set key and data to dictionary
-        self.positiveRoiDict[ imagePathStr ] = [ topLeftTuple, bottomRightTuple ]
+        #   check key
+        if imagePathStr not in self.positiveRoiDict.keys():
+            
+            #   create empty list
+            self.positiveRoiDict[ imagePathStr ] = list()
+
+            #   append to empty list
+            self.positiveRoiDict[ imagePathStr ].append( ( topLeftTuple, bottomRightTuple ) )
+
+        else:
+            
+            #   just append
+            self.positiveRoiDict[ imagePathStr ].append( ( topLeftTuple, bottomRightTuple ) )
 
     def setNegativeData( self, imagePathStr, topLeftTuple, bottomRightTuple ):
 
-        #   set key and data to dictionary
-        self.negativeRoiDict[ imagePathStr ] = [ topLeftTuple, bottomRightTuple ]
+        #   check key
+        if imagePathStr not in self.negativeRoiDict.keys():
+            
+            #   create empty list
+            self.negativeRoiDict[ imagePathStr ] = list()
+
+            #   append to empty list
+            self.negativeRoiDict[ imagePathStr ].append( ( topLeftTuple, bottomRightTuple ) )
+
+        else:
+            
+            #   just append
+            self.negativeRoiDict[ imagePathStr ].append( ( topLeftTuple, bottomRightTuple ) )
+
+
+    def saveDataDict( self, savePath  ):
+
+        with open( savePath, 'w' ) as streamFile:
+            
+            yaml.dump( self.allPosAndNegDict, stream = streamFile )
+
+        print "Save yaml file at {}".format( savePath )
+
+    def loadDataDict( self, yamlPath ):
+
+        with open( yamlPath, 'r' ) as streamFile:
+
+            self.allPosAndNegDict = yaml.load( streamFile )
+            self.positiveRoiDict = self.allPosAndNegDict[ "Positive" ]
+            self.negativeRoiDict = self.allPosAndNegDict[ "Negative" ]
+
 
     def generateROIImage( self, imgWidth = 40, imgHeight = 40 ):
         
@@ -77,56 +122,66 @@ class ROIProvider( object ):
         #   loop over data in dictionary generate positive image
         #
         
+        print "[INFO] Generate positive roi image "
         for imagePath, roiList in self.positiveRoiDict.iteritems():
             
             #   read image
             img = cv2.imread( imagePath )
 
-            #   get roi information
-            #   top left = ( row1, col1 )
-            row1 = roiList[ 0 ][ 0 ]
-            col1 = roiList[ 0 ][ 1 ]
+            for roiTuple in roiList:
 
-            #   bottom right = ( row2, col2 )
-            row2 = roiList[ 1 ][ 0 ]
-            col2 = roiList[ 1 ][ 1 ]
+                #   get roi information
+                #   top left = ( row1, col1 )
+                row1 = roiTuple[ 0 ][ 0 ]
+                col1 = roiTuple[ 0 ][ 1 ]
 
-            #   crop by using roi list
-            cropImage = img[ row1 : row2, col1 : col2 ]
+                #   bottom right = ( row2, col2 )
+                row2 = roiTuple[ 1 ][ 0 ]
+                col2 = roiTuple[ 1 ][ 1 ]
 
-            #   resize image to desire size
-            cropImageResized = cv2.resize( cropImage, ( imgWidth, imgHeight ) )
- 
-            #   append to roi list
-            self.positiveImageList.append( cropImageResized )
+                #   crop by using roi list
+                cropImage = img[ row1 : row2, col1 : col2 ]
+
+                #   resize image to desire size
+                cropImageResized = cv2.resize( cropImage, ( imgWidth, imgHeight ) )
+    
+                #   append to roi list
+                self.positiveImageList.append( cropImageResized )
+        
+        print "[INFO] Finish generate positive roi image "
         
         
         #
         #   loop over data in dictionary generate negative image
         #
 
+        print "[INFO] Generate negative roi image "
         for imagePath, roiList in self.negativeRoiDict.iteritems():
             
             #   read image
             img = cv2.imread( imagePath )
 
-            #   get roi information
-            #   top left = ( row1, col1 )
-            row1 = roiList[ 0 ][ 0 ]
-            col1 = roiList[ 0 ][ 1 ]
+            for roiTuple in roiList:
+            
+                #   get roi information
+                #   top left = ( row1, col1 )
+                row1 = roiTuple[ 0 ][ 0 ]
+                col1 = roiTuple[ 0 ][ 1 ]
 
-            #   bottom right = ( row2, col2 )
-            row2 = roiList[ 1 ][ 0 ]
-            col2 = roiList[ 1 ][ 1 ]
+                #   bottom right = ( row2, col2 )
+                row2 = roiTuple[ 1 ][ 0 ]
+                col2 = roiTuple[ 1 ][ 1 ]
 
-            #   crop by using roi list
-            cropImage = img[ row1 : row2, col1 : col2 ]
+                #   crop by using roi list
+                cropImage = img[ row1 : row2, col1 : col2 ]
 
-            #   resize image to desire size
-            cropImageResized = cv2.resize( cropImage, ( imgWidth, imgHeight ) )
- 
-            #   append to roi list
-            self.negativeImageList.append( cropImageResized )       
+                #   resize image to desire size
+                cropImageResized = cv2.resize( cropImage, ( imgWidth, imgHeight ) )
+    
+                #   append to roi list
+                self.negativeImageList.append( cropImageResized )
+
+        print "[INFO] Finish generate negative roi image "       
 
     def writeImage( self, savePathStr = '/tmpfs' ):
 
@@ -142,15 +197,19 @@ class ROIProvider( object ):
         #   write positive image
         #
 
+        print "[INFO] Save positive roi image"
+        
         for idx, roiImage in enumerate( self.positiveImageList ):
             
             #   get index name
             idxNameStr = str( idx )
             if len( idxNameStr ) == 1:
-                idxNameStr = '000' + idxNameStr
+                idxNameStr = '0000' + idxNameStr
             elif len( idxNameStr ) == 2:
-                idxNameStr = '00' + idxNameStr
+                idxNameStr = '000' + idxNameStr
             elif len( idxNameStr ) == 3:
+                idxNameStr = '00' + idxNameStr
+            elif len( idxNameStr ) == 4:
                 idxNameStr = '0' + idxNameStr
 
             #   get file name
@@ -169,19 +228,25 @@ class ROIProvider( object ):
             if not doWrite:
                 raise TypeError( "Cannot write image at {}".format( savePath_oneImage ) )
 
+        print "[INFO] Finish save positive roi image"
+
         #
         #   write negative image
         #
+
+        print "[INFO] Save negative roi image"
 
         for idx, roiImage in enumerate( self.negativeImageList ):
             
             #   get index name
             idxNameStr = str( idx )
             if len( idxNameStr ) == 1:
-                idxNameStr = '000' + idxNameStr
+                idxNameStr = '0000' + idxNameStr
             elif len( idxNameStr ) == 2:
-                idxNameStr = '00' + idxNameStr
+                idxNameStr = '000' + idxNameStr
             elif len( idxNameStr ) == 3:
+                idxNameStr = '00' + idxNameStr
+            elif len( idxNameStr ) == 4:
                 idxNameStr = '0' + idxNameStr
 
             #   get file name
@@ -199,6 +264,8 @@ class ROIProvider( object ):
             #   check write
             if not doWrite:
                 raise TypeError( "Cannot write image at {}".format( savePath_oneImage ) )
+
+            print "[INFO] Finish save negative roi image"
 
 if __name__ == "__main__":
     
