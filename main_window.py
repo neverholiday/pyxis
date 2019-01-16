@@ -18,10 +18,12 @@ import os
 #
 
 from PyQt4 import QtGui
-from widget.step_button import StepButton
-from widget.image_widget import ImageWidget
+#from widget.step_button import StepButton
+#from widget.image_widget import ImageWidget
 
 from image_provider.frame_provider import ImageSequence
+
+from widget.frame_with_roi import FrameWithROI
 
 ########################################################
 #
@@ -47,7 +49,7 @@ TEST_IMAGE_PATH = "/home/neverholiday/work/ball_detector/raw_data/data1"
 
 class MainWindow( QtGui.QMainWindow ):
 
-    def __init__( self, framePathStr ):
+    def __init__( self, framePathStr, saveYAMLPath = None ):
         
         #   call init from super class
         super( MainWindow, self ).__init__()
@@ -56,51 +58,69 @@ class MainWindow( QtGui.QMainWindow ):
         menuBar = self.menuBar()
 
         #   add file menu to menu bar
-        fileMenu = menuBar.addMenu( "File" )
+        self.fileMenu = menuBar.addMenu( "File" )
 
         #   add `New` action
-        fileMenu.addAction( "New" )
+        self.loadAction = QtGui.QAction( "Load", self )
+        self.fileMenu.addAction( self.loadAction )
 
         #   create `Save` action
-        saveAction = QtGui.QAction( "Save", self )
-        saveAction.setShortcut( "Ctrl+S" )
+        self.saveAction = QtGui.QAction( "Save", self )
+        self.saveAction.setShortcut( "Ctrl+S" )
+        self.saveAction.triggered.connect( self.saveActionFunctionCallback )
         
         #   add `Save` action
-        fileMenu.addAction( saveAction )
+        self.fileMenu.addAction( self.saveAction )
 
         #   add `Quit` action
-        quitAction = QtGui.QAction( "Quit", self )
-        fileMenu.addAction( quitAction )
+        self.quitAction = QtGui.QAction( "Quit", self )
+        self.fileMenu.addAction( self.quitAction )
 
         #   initial instnce of widget profile
-        mainWidget = MainWidget( framePathStr )
+        self.mainWidget = MainWidget( framePathStr, saveYAMLPath )
 
         #   add outside widget
-        self.setCentralWidget( mainWidget )
+        self.setCentralWidget( self.mainWidget )
 
         #   set title
         self.setWindowTitle( "Pyxis (beta-version)" )
 
+    def saveActionFunctionCallback( self ):
+        
+        #   get file path
+        filePathStr = str( QtGui.QFileDialog.getSaveFileName( self, "Save yaml", os.path.expanduser( "~" ) ) )
+
+        #   check format if not have put it
+        if filePathStr.split( '.' )[ -1 ] != 'yaml':
+            filePathStr += ".yaml"
+
+        print "Save as {}".format( filePathStr )
+
+        #   save yaml
+        self.mainWidget.frameWithROI.roiProvider.saveDataDict( filePathStr )
+
+
 class MainWidget( QtGui.QWidget ):
 
-    def __init__( self, framePath ):
+    def __init__( self, framePath, saveYAMLPath ):
 
         #   call super class
         super( MainWidget, self ).__init__()
 
         #   create image sequence instance
-        self.imageSequenceProvider = ImageSequence( framePath )
+        # self.imageSequenceProvider = ImageSequence( framePath )
 
         #   get widget
         #self.imageWidget = ImageWidget( self.imageSequenceProvider )
-        self.buttonWidget = StepButton( self.imageSequenceProvider )
+        #self.buttonWidget = StepButton( self.imageSequenceProvider )
+
+        self.frameWithROI = FrameWithROI( framePath, saveYAMLPath )
 
         #   create box layout
         self.boxLayout = QtGui.QVBoxLayout()   
 
         #   add widget to box
-        self.boxLayout.addWidget( self.buttonWidget )
-
+        self.boxLayout.addWidget( self.frameWithROI )
       
         #   set layout
         self.setLayout( self.boxLayout )
