@@ -65,8 +65,8 @@ def main():
 	parser = optparse.OptionParser( usage = programUsage, description=PROGRAM_DESCRIPTION )
 
 	#	add option of main script
-	# parser.add_option( "-o", "--myOption", dest = "myOption",
-	# 					help = "Specify option document here." )
+	parser.add_option( "--yamlPath", dest = "yamlPath", type = "string", action = "store",
+						help = "Load yaml." )
 
 	#	add option
 	( options, args ) = parser.parse_args()
@@ -88,11 +88,14 @@ def main():
 	#	get frame path str
 	framePathStr = args[ 0 ]
 
+	#	get yaml path
+	yamlPathStr = options.yamlPath
+
 	#	initial app
 	app = QtGui.QApplication( sys.argv )
 
 	#	call widget
-	mainWindow = MainWindow( framePathStr )
+	mainWindow = MainWindow( framePathStr, yamlPathStr )
 
 	#	show
 	mainWindow.show()
