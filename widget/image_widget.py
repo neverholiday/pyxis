@@ -88,6 +88,8 @@ class ImageWithBoundingBox( ImageLabel ):
 		#   get top left position
 		self.topLeftPosition = event.pos()
 		self.bottomRightPosition = event.pos()
+		
+		print type( event.pos() )
 
  		#   update 
 		#self.update()

@@ -56,7 +56,7 @@ class ColorCalibrateSubapp( QtGui.QWidget ):
         self.savePathStr = savePath
 
         #   create color button and slider
-        self.colorButton = ColorButton( self.configDict )
+        self.colorButton = ColorButton( self.configDict[ "ColorDefinitions" ] )
         self.frameCameraWidget = FrameWidget( cameraDevice, self.colorButton )
 
         #   create export button

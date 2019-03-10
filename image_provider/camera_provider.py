@@ -82,6 +82,9 @@ class Camera( object ):
 
         #   convert to RGB
         self.frame = cv2.cvtColor( self.frame, cv2.COLOR_BGR2RGB )
+	
+	#	blur
+	self.frame = cv2.GaussianBlur( self.frame, ( 5, 5 ), 0 )
 
     def getImageWithMask( self, upperValueList, lowerValueList ):
 

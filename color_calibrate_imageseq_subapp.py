@@ -22,6 +22,7 @@ from PyQt4 import QtCore
 
 from widget.frame_with_next_previous_button import ImageWithNextPreviousButton
 from widget.color_calibrate_button_widget import ColorButton
+from widget.image_renderer import ImageLabel
 
 from config_generator import getConfigDict, saveConfig
 
@@ -58,8 +59,8 @@ class ColorCalibrateImageSeqSubapp( QtGui.QWidget ):
         self.savePath = savePath
 
         #   initialize image with button and color button
-        self.colorButton = ColorButton( self.configDict )
-        self.imageWithButton = ImageWithNextPreviousButton( imageSeqPathStr, self.colorButton )
+        self.colorButton = ColorButton( self.configDict[ "ColorDefinitions" ] )
+        self.imageWithButton = ImageWithNextPreviousButton( imageSeqPathStr, ImageLabel, self.colorButton )
 
         #   create export button
         self.exportButton = QtGui.QPushButton( "Export" )

@@ -52,12 +52,20 @@ def filterGetOnlyFrameName( dataList, indicateFrameStr = 'frame' ):
 	
 	return dataFilterList
 
-def convertBGR2RGB( numpyImage ):
+def convertBGR2RGB( frameDataList ):
+	
+	#	create empty list
+	frameRGBList = list()
+	
+	for image in frameDataList:
+	
+		#	convert color format to RGB format
+		imageRGB = cv2.cvtColor( image.copy(), cv2.COLOR_BGR2RGB )
+		
+		#	append to list
+		frameRGBList.append( imageRGB )
 
-	#	convert color format to RGB format
-	imageRGB = cv2.cvtColor( numpyImage.copy(), cv2.COLOR_BGR2RGB )
-
-	return imageRGB
+	return frameRGBList
 ########################################################
 #
 #	CLASS DEFINITIONS
@@ -175,13 +183,13 @@ class ImageSequence( object ):
 		#	return it!!!
 		return framePathList
 
-	def getFrameData( self ):
+	def getFrameData( self, enableBlur = True ):
 
 		#	get frame data
 		frameData = map( cv2.imread, self.framePathList )
 	
 		#	change bgr to rgb
-		frameData = map( convertBGR2RGB, frameData )
+		frameData = convertBGR2RGB( frameData )
 		
 		return frameData
 

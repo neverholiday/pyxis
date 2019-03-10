@@ -108,9 +108,11 @@ class ImageWithNextPreviousButton( QtGui.QWidget ):
 
 	def nextButtonFunctionCallback( self ):
 		print "call nexButtonFunctionCallback"
-
+		
 		#   call provider
 		self.imageSequenceProvider.nextFrame()
+		
+		print " {} / {} ".format( self.imageSequenceProvider.indexPointer + 1, self.imageSequenceProvider.numFrame )
 
 		#	display!
 		self.displayImageWithMask()
@@ -120,6 +122,8 @@ class ImageWithNextPreviousButton( QtGui.QWidget ):
 
 		#   call provider
 		self.imageSequenceProvider.previousFrame()
+		
+		print " {} / {} ".format( self.imageSequenceProvider.indexPointer + 1, self.imageSequenceProvider.numFrame )
 
 		#	display!
 		self.displayImageWithMask()
@@ -148,7 +152,7 @@ class ImageWithNextPreviousButton( QtGui.QWidget ):
 				#	display!
 				self.displayImageWithMask()
 			
-			print " {} / {} ".format( self.imageSequenceProvider.indexPointer, self.imageSequenceProvider.numFrame )
+			print " {} / {} ".format( self.imageSequenceProvider.indexPointer + 1, self.imageSequenceProvider.numFrame )
 
 	def timerUpdateFrameFunctionCallback( self ):
 		
