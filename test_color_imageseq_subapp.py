@@ -60,7 +60,7 @@ NUM_REQUIRE_ARGUMENT = 1
 def main():
 	
 	#	define usage of programing
-	programUsage = "python %prog arg [option] " + str( VERSIONNUMBER ) + ', Copyright (C) 2018 FIBO/KMUTT'
+	programUsage = "python %prog [framePathStr] [option] " + str( VERSIONNUMBER ) + ', Copyright (C) 2018 FIBO/KMUTT'
 
 	#	initial parser instance
 	parser = optparse.OptionParser( usage = programUsage, description=PROGRAM_DESCRIPTION )

@@ -18,6 +18,7 @@ import os
 
 import optparse
 
+import math
 
 ########################################################
 #
@@ -56,6 +57,21 @@ def generateFrameNumber( numIdx ):
 
 	return idxNameStr
 
+def checkDigitNumbers( number ):
+	'''	checkDigitNumbers function
+	'''
+
+	if number > 0:
+		digit = int( math.log10( number ) ) + 1
+
+	elif number == 0:
+		digit = 1
+
+	else:
+		digit = int( math.log10( abs( number ) ) ) + 1
+
+	return digit
+
 ########################################################
 #
 #	Class definitions
@@ -73,7 +89,7 @@ def generateFrameNumber( numIdx ):
 def main():
 	
 	#	define usage of programing
-	programUsage = "python %prog arg [option] " + str( VERSIONNUMBER ) + ', Copyright (C) 2018 FIBO/KMUTT'
+	programUsage = "python %prog [videoPath] [saveDirPath] [option] " + str( VERSIONNUMBER ) + ', Copyright (C) 2018 FIBO/KMUTT'
 
 	#	initial parser instance
 	parser = optparse.OptionParser( usage = programUsage, description=PROGRAM_DESCRIPTION )
@@ -114,11 +130,11 @@ def main():
 	#	initial capture instance
 	capture = cv2.VideoCapture( videoPathStr )
 
-	#	TODO : อย่างแรง
-	#	ให้ savefile เท่าไหร่ก็ได้
-	#	แก้ขัดไปก่อน
-	if capture.get( cv2.CAP_PROP_FRAME_COUNT ) > 9999:
-		raise TypeError( "HAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHA, Exceed 9999 frames" )
+	#	check num frame
+	frameNumbers = capture.get( cv2.CAP_PROP_FRAME_COUNT )
+
+	#	get digit number
+	digitNumber = checkDigitNumbers( frameNumbers )
 
 	#	initial frame index
 	frameIndex = 0
@@ -137,16 +153,14 @@ def main():
 		#
 
 		#	get frame number for save
-		frameIndexStr = generateFrameNumber( frameIndex )
+		# frameIndexStr = generateFrameNumber( frameIndex )
+		frameIndexStr = "{:0{width}d}".format( frameIndex, width=digitNumber  )
 
 		#	combine prefix, frame number and format file
-		fileNameStr = prefixNameStr + frameIndexStr + '.' + formatName
+		fileNameStr = prefixNameStr + '.' + frameIndexStr + '.' + formatName
 
-		if saveDirPathStr[ -1 ] != '/':
-			savePathStr = saveDirPathStr + '/' + fileNameStr
-
-		else:
-			savePathStr = saveDirPathStr + fileNameStr
+		#	Join path
+		savePathStr = os.path.join( saveDirPathStr, fileNameStr )
 		
 		save = cv2.imwrite( savePathStr, frame )
 
@@ -157,7 +171,7 @@ def main():
 		#	Show Information 
 		#
 		print "Save as {}".format( savePathStr )
-		print "Remaining {} / {} ".format( frameIndex + 1, int( capture.get( cv2.CAP_PROP_FRAME_COUNT ) ) ) 
+		print "Remaining {} / {} ".format( frameIndex + 1, int( frameNumbers ) ) 
 
 		#	increment index of frame number
 		frameIndex += 1	

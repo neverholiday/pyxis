@@ -53,6 +53,9 @@ class ImageWithNextPreviousButton( QtGui.QWidget ):
 		#   generate image seqeunce from path given
 		self.imageSequenceProvider = ImageSequence( framePathStr )
 
+		#	get number of frame
+		self.numFrame = self.imageSequenceProvider.getNumFrames()
+
 		#   initial flag play/pause
 		self.playPauseFlag = 0
 
@@ -68,6 +71,13 @@ class ImageWithNextPreviousButton( QtGui.QWidget ):
 		self.playPauseButton = QtGui.QPushButton( "Play/Pause" )
 		self.previousButton = QtGui.QPushButton( "Previous" )
 
+		#	Create slider
+		self.sliderWidget = QtGui.QSlider( QtCore.Qt.Horizontal )
+		self.sliderWidget.setMinimum( 0 )
+		self.sliderWidget.setMaximum( self.numFrame )
+		# self.sliderWidget.setTickPosition( QtGui.QSlider.TicksBelow )
+		# self.sliderWidget.setTickInterval( 20 )
+
 		#	create shortcut for button
 		self.nextButton.setShortcut( QtGui.QKeySequence( QtCore.Qt.Key_D ) )
 		self.previousButton.setShortcut( QtGui.QKeySequence( QtCore.Qt.Key_A ) )
@@ -77,6 +87,7 @@ class ImageWithNextPreviousButton( QtGui.QWidget ):
 		self.nextButton.clicked.connect( self.nextButtonFunctionCallback )
 		self.previousButton.clicked.connect( self.previousButtonFunctionCallback )
 		self.playPauseButton.clicked.connect( self.playPauseButtonFunctionCallback )
+		self.sliderWidget.valueChanged.connect( self.sliderFunctionCallback )
 
 		#   start timer interupt
 		#   connect with function callback 
@@ -101,6 +112,7 @@ class ImageWithNextPreviousButton( QtGui.QWidget ):
 
 		#   add all layout and widget to main layout
 		self.mainLayout.addWidget( self.imageLabel )
+		self.mainLayout.addWidget( self.sliderWidget )
 		self.mainLayout.addLayout( self.buttonLayout )
 
 		#   set main layout
@@ -127,7 +139,18 @@ class ImageWithNextPreviousButton( QtGui.QWidget ):
 
 		#	display!
 		self.displayImageWithMask()
+
+	def	sliderFunctionCallback( self ):
 		
+		#	get index frame
+		idxFrame = self.sliderWidget.value()
+
+		#	set index frame
+		self.imageSequenceProvider.setIndexFrame( idxFrame )
+		
+		#	display
+		self.displayImageWithMask()
+
 	def playPauseButtonFunctionCallback( self ):
 		print "call playPauseButtonFunctionCallback"
 
@@ -140,6 +163,12 @@ class ImageWithNextPreviousButton( QtGui.QWidget ):
 			
 			#	continueous to call next frame
 			retrieve = self.imageSequenceProvider.nextFrame()
+
+			#	get frame index
+			currentIdx = self.imageSequenceProvider.getIndexPointer()
+
+			#	assign to slider
+			self.sliderWidget.setValue( currentIdx )
 			
 			#	display!
 			self.displayImageWithMask()

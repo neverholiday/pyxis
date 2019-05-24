@@ -118,6 +118,12 @@ class FrameWithROI( ImageWithNextPreviousButton ):
 
 		#   call next frame
 		self.imageSequenceProvider.nextFrame()
+
+		#	get current index
+		currentIdx = self.imageSequenceProvider.getIndexPointer()
+
+		#	set to slider
+		self.sliderWidget.setValue( currentIdx )
 		
 		print " {} / {} ".format( self.imageSequenceProvider.indexPointer + 1, self.imageSequenceProvider.numFrame )
 
@@ -139,6 +145,12 @@ class FrameWithROI( ImageWithNextPreviousButton ):
 
 		#   call previous frame
 		self.imageSequenceProvider.previousFrame()
+
+		#	get current index
+		currentIdx = self.imageSequenceProvider.getIndexPointer()
+
+		#	set to slider
+		self.sliderWidget.setValue( currentIdx )
 		
 		print " {} / {} ".format( self.imageSequenceProvider.indexPointer + 1, self.imageSequenceProvider.numFrame )
 
@@ -154,6 +166,28 @@ class FrameWithROI( ImageWithNextPreviousButton ):
 		#	erase current rect
 		self.imageLabel.topLeftPosition = QtCore.QPoint()
 		self.imageLabel.bottomRightPosition = QtCore.QPoint()
+
+	def sliderFunctionCallback( self ):
+
+		#	get index frame from slider
+		idxFrame = self.sliderWidget.value()
+
+		#	set index frame
+		self.imageSequenceProvider.setIndexFrame( idxFrame )
+
+		#	load saved roi
+		positiveROIList, negativeROIList = self.loadCurrentROITuple()
+
+		#	set saved positive roi list
+		self.setListROI( positiveROIList, negativeROIList )
+
+		#	display!
+		self.displayImageWithMask()
+
+		#	erase current rect
+		self.imageLabel.topLeftPosition = QtCore.QPoint()
+		self.imageLabel.bottomRightPosition = QtCore.QPoint()
+
 
 	def playPauseButtonFunctionCallback( self ):
 		print "call playPauseButtonFunctionCallback"
@@ -270,6 +304,12 @@ class FrameWithROI( ImageWithNextPreviousButton ):
 			
 			#	continueous to call next frame
 			retrieve = self.imageSequenceProvider.nextFrame()
+
+			#	get current index
+			currentIdx = self.imageSequenceProvider.getIndexPointer()
+
+			#	set value to slider
+			self.sliderWidget.setValue( currentIdx )
 			
 			#	display!
 			self.displayImageWithMask()

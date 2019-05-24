@@ -178,7 +178,8 @@ class ImageSequence( object ):
 		framePathList.sort()
 
 		#	add abspath to frame name
-		framePathList = map( lambda frameNameStr : self.framePathStr + '/' + frameNameStr, framePathList )
+		#framePathList = map( lambda frameNameStr : self.framePathStr + '/' + frameNameStr, framePathList )
+		framePathList = map( lambda frameNameStr : os.path.join( self.framePathStr, frameNameStr ), framePathList )
 
 		#	return it!!!
 		return framePathList
@@ -192,6 +193,14 @@ class ImageSequence( object ):
 		frameData = convertBGR2RGB( frameData )
 		
 		return frameData
+
+	def getNumFrames( self ):
+
+		return self.numFrame  
+
+	def getIndexPointer( self ):
+		
+		return self.indexPointer
 
 if __name__ == "__main__":
 	
