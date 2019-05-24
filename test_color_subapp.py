@@ -71,7 +71,7 @@ def main():
 						help = "Import config path." )
 	
 	parser.add_option( "-o", "--exportConfigPathStr", dest = "exportConfigPathStr", type = "string", action = "store",
-						help = "Export config path.", default = "/tmpfs/config.ini" )
+						help = "Export config path.", default = "/tmp/config.ini" )
 	
 
 	#	add option
