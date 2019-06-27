@@ -65,10 +65,14 @@ class ColorButton( QtGui.QWidget ):
 
 		#   initial slider
 		self.sliderWidget = Slider( *getConfigValue( self.configDict, str( self.colorParameterComboBox.currentText() ) ) )
+
+		#	Create reset button
+		self.resetButton = QtGui.QPushButton( "Reset" )
  
 		#   connect callback function
 		self.submitButton.clicked.connect( self.submitButtonCallbackFunction )
 		self.colorParameterComboBox.currentIndexChanged.connect( self.colorParameterComboBoxCallbackFunction )
+		self.resetButton.clicked.connect( self.resetButtonCallbackFunction )
 
 		#   create layout
 		self.verticalBoxLayout = QtGui.QVBoxLayout()
@@ -76,6 +80,7 @@ class ColorButton( QtGui.QWidget ):
 		#   add slider to layout
 		self.verticalBoxLayout.addWidget( self.colorParameterComboBox )
 		self.verticalBoxLayout.addWidget( self.sliderWidget )
+		self.verticalBoxLayout.addWidget( self.resetButton )
 		self.verticalBoxLayout.addWidget( self.submitButton )
 
 		#   set layout
@@ -109,12 +114,19 @@ class ColorButton( QtGui.QWidget ):
 		hMax, sMax, vMax, hMin, sMin, vMin = getConfigValue( self.configDict, colorKeyStr )
 
 		#	change slider value
-		self.sliderWidget.hMaxSlider.setValue( hMax )
-		self.sliderWidget.sMaxSlider.setValue( sMax )
-		self.sliderWidget.vMaxSlider.setValue( vMax )
-		self.sliderWidget.hMinSlider.setValue( hMin )
-		self.sliderWidget.sMinSlider.setValue( sMin )
-		self.sliderWidget.vMinSlider.setValue( vMin )
+		# self.sliderWidget.hMaxSlider.setValue( hMax )
+		# self.sliderWidget.sMaxSlider.setValue( sMax )
+		# self.sliderWidget.vMaxSlider.setValue( vMax )
+		# self.sliderWidget.hMinSlider.setValue( hMin )
+		# self.sliderWidget.sMinSlider.setValue( sMin )
+		# self.sliderWidget.vMinSlider.setValue( vMin )
+		self.sliderWidget.setValue( hMax, sMax, vMax, hMin, sMin, vMin )
+
+
+	def resetButtonCallbackFunction( self ):
+
+		#	Reset value from config
+		self.sliderWidget.setValue( *getConfigValue( self.configDict, str( self.colorParameterComboBox.currentText() ) ) )
 		 
 
 	def getColorRangeValueList( self ):
@@ -137,7 +149,7 @@ if __name__ == "__main__":
 	app = QtGui.QApplication( sys.argv )
 
 	#	get dummy config
-	config = configobj.ConfigObj( CONFIG_DEFAULT_PATH )
+	config = configobj.ConfigObj( CONFIG_DEFAULT_PATH )[ "ColorDefinitions" ]
 	
 	#	call widget
 	widget = ColorButton( config )

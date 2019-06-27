@@ -226,6 +226,15 @@ class Slider( QtGui.QWidget ):
     
         self.vMinValue = int( self.vMinLineEdit.text() )
         self.vMinSlider.setValue( self.vMinValue )
+    
+    def setValue( self, h_max, s_max, v_max, h_min, s_min, v_min ):
+
+        self.hMaxSlider.setValue( h_max )
+        self.hMinSlider.setValue( h_min )
+        self.sMaxSlider.setValue( s_max )
+        self.sMinSlider.setValue( s_min )
+        self.vMaxSlider.setValue( v_max )
+        self.vMinSlider.setValue( v_min )
 
 if __name__ == "__main__":
     

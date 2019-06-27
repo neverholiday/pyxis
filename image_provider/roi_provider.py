@@ -170,6 +170,11 @@ class ROIProvider( object ):
 				row2 = roiTuple[ 1 ][ 0 ]
 				col2 = roiTuple[ 1 ][ 1 ]
 
+				print roiTuple
+
+				row1, row2 = ( row1, row2 )if row2 > row1 else ( row2, row1 )
+				col1, col2 = ( col1, col2 ) if col2 > col1 else (col2, col1)
+
 				#   crop by using roi list
 				cropImage = img[ row1 : row2, col1 : col2 ]
 
@@ -203,6 +208,9 @@ class ROIProvider( object ):
 				row2 = roiTuple[ 1 ][ 0 ]
 				col2 = roiTuple[ 1 ][ 1 ]
 
+				row1, row2 = (row1, row2) if row2 > row1 else (row2, row1)
+				col1, col2 = (col1, col2) if col2 > col1 else (col2, col1)
+
 				#   crop by using roi list
 				cropImage = img[ row1 : row2, col1 : col2 ]
 
@@ -212,9 +220,10 @@ class ROIProvider( object ):
 				#   append to roi list
 				self.negativeImageList.append( cropImageResized )
 
+
 		print "[INFO] Finish generate negative roi image "       
 
-	def writeImage( self, savePathStr = '/tmpfs' ):
+	def writeImage( self, savePathStr = '/tmpfs', zeroPad = 4 ):
 
 		#   good path and bad path
 		positiveImagePathStr = os.path.abspath( savePathStr ) + '/' + 'positive'
@@ -232,19 +241,21 @@ class ROIProvider( object ):
 		
 		for idx, roiImage in enumerate( self.positiveImageList ):
 			
-			#   get index name
-			idxNameStr = str( idx )
-			if len( idxNameStr ) == 1:
-				idxNameStr = '0000' + idxNameStr
-			elif len( idxNameStr ) == 2:
-				idxNameStr = '000' + idxNameStr
-			elif len( idxNameStr ) == 3:
-				idxNameStr = '00' + idxNameStr
-			elif len( idxNameStr ) == 4:
-				idxNameStr = '0' + idxNameStr
+			# #   get index name
+			# idxNameStr = str( idx )
+			# if len( idxNameStr ) == 1:
+			# 	idxNameStr = '0000' + idxNameStr
+			# elif len( idxNameStr ) == 2:
+			# 	idxNameStr = '000' + idxNameStr
+			# elif len( idxNameStr ) == 3:
+			# 	idxNameStr = '00' + idxNameStr
+			# elif len( idxNameStr ) == 4:
+			# 	idxNameStr = '0' + idxNameStr
+
+			idxStr = str( idx ).zfill( zeroPad )
 
 			#   get file name
-			frameNameStr = 'frame' + idxNameStr + '.jpg'
+			frameNameStr = 'frame.{}.jpg'.format( idxStr )
 
 			#   combine with save path for save correctly
 			if positiveImagePathStr[ -1 ] != '/':
@@ -269,19 +280,21 @@ class ROIProvider( object ):
 
 		for idx, roiImage in enumerate( self.negativeImageList ):
 			
-			#   get index name
-			idxNameStr = str( idx )
-			if len( idxNameStr ) == 1:
-				idxNameStr = '0000' + idxNameStr
-			elif len( idxNameStr ) == 2:
-				idxNameStr = '000' + idxNameStr
-			elif len( idxNameStr ) == 3:
-				idxNameStr = '00' + idxNameStr
-			elif len( idxNameStr ) == 4:
-				idxNameStr = '0' + idxNameStr
+			# #   get index name
+			# idxNameStr = str( idx )
+			# if len( idxNameStr ) == 1:
+			# 	idxNameStr = '0000' + idxNameStr
+			# elif len( idxNameStr ) == 2:
+			# 	idxNameStr = '000' + idxNameStr
+			# elif len( idxNameStr ) == 3:
+			# 	idxNameStr = '00' + idxNameStr
+			# elif len( idxNameStr ) == 4:
+			# 	idxNameStr = '0' + idxNameStr
+
+			idxStr = str( idx ).zfill( zeroPad )
 
 			#   get file name
-			frameNameStr = 'frame' + idxNameStr + '.jpg'
+			frameNameStr = 'frame.{}.jpg'.format( idxStr )
 
 			#   combine with save path for save correctly
 			if negativeImagePathStr[ -1 ] != '/':

@@ -77,10 +77,10 @@ class ColorCalibrateSubapp( QtGui.QWidget ):
         self.setLayout( self.verticalBoxLayout )
 
     def exportButtonCallbackFunction( self ):
-        
-        print "Save!"
 
         saveConfig( self.configDict, savePathStr = self.savePathStr )
+        
+        print "Save at {}".format( self.savePathStr )
 
 if __name__ == "__main__":
 	

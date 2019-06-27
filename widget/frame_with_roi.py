@@ -288,7 +288,7 @@ class FrameWithROI( ImageWithNextPreviousButton ):
 	def exportButtonFunctionCallback( self ):
 
 		#	generate roi image from position
-		self.roiProvider.generateROIImage()
+		self.roiProvider.generateROIImage( imgWidth = 64, imgHeight = 64 )
 		
 		#	popup and get path of saved directory
 		saveDirectoryStr = str( QtGui.QFileDialog.getExistingDirectory( self, "Save directory", os.path.expanduser( "~" ) ) )

@@ -27,6 +27,9 @@ from PyQt4 import QtCore
 from PyQt4 import QtGui
 from color_calibrate_subapp import ColorCalibrateSubapp
 
+#	Dependency from hanuman framework
+from utility.v4l_handler import V4L_Handler
+
 ########################################################
 #
 #	Standard globals
@@ -92,6 +95,13 @@ def main():
 	
 	importConfigPathStr = options.importConfigPathStr
 	exportConfigPathStr = options.exportConfigPathStr
+
+	print "Enter to color calibrator subapp"
+
+	print "Config camera..."
+	v4l = V4L_Handler( cameraDevice, importConfigPathStr )
+	v4l.executeAllCommandByDefaultArgument()
+	print "Finished"
 
 	#	initial app
 	app = QtGui.QApplication( sys.argv )
