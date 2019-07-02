@@ -88,7 +88,7 @@ class MainWindow( QtGui.QMainWindow ):
     def saveActionFunctionCallback( self ):
         
         #   get file path
-        filePathStr = str( QtGui.QFileDialog.getSaveFileName( self, "Save yaml", os.path.expanduser( "~" ) ) )
+        filePathStr = str( QtGui.QFileDialog.getSaveFileName( self, "Save yaml", os.path.expanduser( "~" ), '(*.yaml)' ) )
 
         #   check format if not have put it
         if filePathStr.split( '.' )[ -1 ] != 'yaml':
